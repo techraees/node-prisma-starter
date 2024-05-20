@@ -1,36 +1,37 @@
-const isValidObjectId = require("../utils/validateMongooseID");
-const User = require("../models/userModel"); // Import the User model
-
-// Get all users
-const getAllUsers = async (req, res) => {
-  try {
-    const users = await User.find();
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
+import { PrismaClient } from '@prisma/client'
+const prisma = new PrismaClient();
 
 // Create a new user
-const createNewUser = async (req, res) => {
+export const createNewUser = async (req, res) => {
   try {
-    const { error } = userValidationSchema.validate(req.body);
-    if (error) {
-      return res.status(400).json({ error: error.details[0].message });
-    }
-
-    const newUser = await User.create(req.body);
+    const newUser = await prisma.user.create({
+      data: req.body,
+    });
     res.status(201).json(newUser);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
+// Get all users
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await prisma.user.findMany();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 // Get a single user by ID
-const getSingleUser = async (req, res) => {
+export const getSingleUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findById(id);
+    const user = await prisma.user.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+    });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -41,20 +42,15 @@ const getSingleUser = async (req, res) => {
 };
 
 // Update user profile by ID
-const updateUserProfile = async (req, res) => {
+export const updateUserProfile = async (req, res) => {
   try {
     const { id } = req.params;
-    const { error } = userValidationSchema.validate(req.body);
-    if (error) {
-      return res.status(400).json({ error: error.details[0].message });
-    }
-
-    const updatedUser = await User.findByIdAndUpdate(id, req.body, {
-      new: true,
+    const updatedUser = await prisma.user.update({
+      where: {
+        id: parseInt(id),
+      },
+      data: req.body,
     });
-    if (!updatedUser) {
-      return res.status(404).json({ error: "User not found" });
-    }
     res.json(updatedUser);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
@@ -62,23 +58,17 @@ const updateUserProfile = async (req, res) => {
 };
 
 // Delete a single user by ID
-const deleteSingleUser = async (req, res) => {
+export const deleteSingleUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const deletedUser = await User.findByIdAndDelete(id);
-    if (!deletedUser) {
-      return res.status(404).json({ error: "User not found" });
-    }
+    await prisma.user.delete({
+      where: {
+        id: parseInt(id),
+      },
+    });
     res.json({ message: "User deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
-module.exports = {
-  getAllUsers,
-  deleteSingleUser,
-  updateUserProfile,
-  getSingleUser,
-  createNewUser,
-};

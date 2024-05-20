@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Creating a Git repository with a basic MVC-based website template that includes Node.js. The project aims to provide a starting point for web development, following the Model-View-Controller (MVC) pattern. It facilitates building scalable web applications with a well-organized structure.",
   "main": "app.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server.js",

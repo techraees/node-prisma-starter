@@ -1,8 +1,9 @@
 // Import required modules
-const express = require("express");
-const fileUpload = require("express-fileupload");
-require("dotenv").config();
-const path = require("path");
+import express from "express"
+import fileUpload from "express-fileupload"
+import dotenv from "dotenv"
+dotenv.config()
+import path from "path"
 
 // Create an Express application
 const app = express();
@@ -14,11 +15,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Static assets
-app.use(express.static(path.join(__dirname, "public")));
 
 // Routes
-const userRoute = require("./routes/userRoute");
-const homeRoute = require("./routes/homeRoute");
+import userRoute from "./routes/userRoute.js"
+import homeRoute from "./routes/homeRoute.js"
 
 app.use("/api", homeRoute);
 app.use("/api/user", userRoute);
